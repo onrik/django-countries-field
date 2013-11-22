@@ -77,6 +77,7 @@ class CountriesFieldTests(TestCase):
     def testContains(self):
         """ Позволяет проверить вхождение списка стран. """
         self.assertTrue("ru" in self.testee.countries)
+        self.assertFalse("Invalid" in self.testee.countries)
 
     def testEqual(self):
         """ Сравнение работает парвильно для одинаковых списков стран. """

@@ -102,7 +102,11 @@ class CountriesValue(object):
         :param item: 2-х символьный код страны для проверки
         :return: True/False
         """
-        binaries = countries_to_bin([item])
+        try:
+            binaries = countries_to_bin([item])
+        except KeyError:
+            # Передана невалидная или неподдерживаемая страна
+            return False
         for i in xrange(4):
             if binaries[i]:
                 return bool(self.binaries[i] & binaries[i])
