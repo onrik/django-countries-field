@@ -1,7 +1,7 @@
 django-countries-field
 =====
 
-[![Build Status](https://travis-ci.org/anatoliy-larin/django-countries-field.png?branch=master)](https://travis-ci.org/anatoliy-larin/django-countries-field)
+[![Build Status](https://travis-ci.org/rutube/django-countries-field.svg)](https://travis-ci.org/rutube/django-countries-field)
 
 Django model field which can store multiple selected countries.
 
