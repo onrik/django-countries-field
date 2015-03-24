@@ -69,6 +69,9 @@ class CountriesValue(object):
             other = other.binaries
         return self.binaries == other
 
+    def __nonzero__(self):
+        return self.binaries != [0, 0, 0, 0]
+
     def __repr__(self):
         return "%s (%s)" % (self.__class__, bin_to_countries(self.binaries))
 

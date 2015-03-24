@@ -93,3 +93,13 @@ class CountriesFieldTests(TestCase):
     @unittest.expectedFailure
     def testLookup(self):
         check = TestCountriesModel.objects.get(countries=["ru"])
+
+    def testBoolean(self):
+        """ Приведение к булевому значению: если ни одной страны не задано,
+        то False, иначе - True. """
+        self.assertTrue(self.testee.countries)
+
+        self.testee.countries = []
+        self.testee.save()
+        check = TestCountriesModel.objects.get(pk=self.testee.pk)
+        self.assertFalse(check.countries)
