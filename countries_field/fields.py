@@ -141,7 +141,8 @@ class CountriesField(models.Field):
         регистриует дескриптор.
 
         """
-        self.name = name
+        self.set_attributes_from_name(name)
+        self.model = cls
         self.cls = cls
         self.bit_field_names = []
 

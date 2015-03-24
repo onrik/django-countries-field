@@ -29,6 +29,6 @@ class CountriesFormField(MultipleChoiceField):
             lang = settings.LANGUAGE_CODE[0:2]
             locale = gettext.translation('iso3166', pycountry.LOCALES_DIR,
                                          languages=[lang])
-            choices = ((k,  locale.ugettext(v)) for k, v in choices)
+            choices = ((k, locale.ugettext(v)) for k, v in choices)
 
         return sorted(choices, key=lambda x: x[1])

@@ -2,6 +2,7 @@
 import unittest
 from django.conf import settings
 from django.db.models import loading
+from django.forms import model_to_dict
 from django.test import TestCase
 
 from countries_field.fields import CountriesValue
@@ -103,3 +104,9 @@ class CountriesFieldTests(TestCase):
         self.testee.save()
         check = TestCountriesModel.objects.get(pk=self.testee.pk)
         self.assertFalse(check.countries)
+
+    def testModelToDict(self):
+        try:
+            model_to_dict(self.testee)
+        except Exception as e:
+            self.fail(e)
