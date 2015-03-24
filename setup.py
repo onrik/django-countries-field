@@ -10,7 +10,7 @@ except ImportError:
 
 setup(
     name='django-countries-field',
-    version='0.1.0',
+    version='0.2',
     author='RUTUBE',
     author_email='devel@rutube.ru',
     url='https://github.com/anatoliy-larin/django-countries-field',
