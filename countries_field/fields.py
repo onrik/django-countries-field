@@ -150,14 +150,15 @@ class CountriesField(models.Field):
         self.cls = cls
         self.bit_field_names = []
 
-        for i in range(0, 4):
-            bit_field_name = "_{}_b{}".format(name, i)
-            start = i * MAX_FLAG_COUNT
-            end = i * MAX_FLAG_COUNT + MAX_FLAG_COUNT
-            flags = alpha2_index[start:end]
-            bit_field = BitField(flags=flags, default=0, editable=False)
-            cls.add_to_class(bit_field_name, bit_field)
-            self.bit_field_names.append(bit_field_name)
+        if not cls._meta.abstract:
+            for i in range(0, 4):
+                bit_field_name = "_{}_b{}".format(name, i)
+                start = i * MAX_FLAG_COUNT
+                end = i * MAX_FLAG_COUNT + MAX_FLAG_COUNT
+                flags = alpha2_index[start:end]
+                bit_field = BitField(flags=flags, default=0, editable=False)
+                cls.add_to_class(bit_field_name, bit_field)
+                self.bit_field_names.append(bit_field_name)
 
         cls._meta.add_virtual_field(self)
         setattr(cls, name, CountriesFieldDescriptor(self))

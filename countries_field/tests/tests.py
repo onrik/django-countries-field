@@ -6,7 +6,7 @@ from django.forms import model_to_dict
 from django.test import TestCase
 
 from countries_field.fields import CountriesValue
-from models import TestCountriesModel
+from models import TestCountriesModel, TestCountriesChildModel
 
 
 class CountriesFieldTests(TestCase):
@@ -111,3 +111,8 @@ class CountriesFieldTests(TestCase):
             model_to_dict(self.testee)
         except Exception as e:
             self.fail(e)
+
+    def testInheritance(self):
+        """ Проверяет, что поле со странами можно унаследовать"""
+        child_model = TestCountriesChildModel.objects.create(countries=self.initial_countries)
+        self.assertEqual(self.initial_countries, child_model.countries)
