@@ -139,12 +139,16 @@ class CountriesFieldDescriptor(Creator):
 
 class CountriesField(models.Field):
     """ Класс поля для хранения битовой карты стран. """
+
+    def get_bit_field_name(self, i, name="countries"):
+        return "_{}_b{}".format(name, i)
+
     def contribute_to_class(self, cls, name, virtual_only=True):
         super(CountriesField, self).contribute_to_class(cls, name, virtual_only=True)
         self.bit_field_names = []
         if not cls._meta.abstract:
             for i in range(0, 4):
-                bit_field_name = get_bit_field_name(i, name=name)
+                bit_field_name = self.get_bit_field_name(i, name=name)
                 start = i * MAX_FLAG_COUNT
                 end = i * MAX_FLAG_COUNT + MAX_FLAG_COUNT
                 flags = ALPHA2_INDEX[start:end]
