@@ -18,15 +18,14 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.4.0,<1.7.0',
-        'django-bitfield>=1.6.0,<1.7.0',
+        'Django>=1.7.0',
         'pycountry>=1.2.0,<1.3.0',
     ],
     setup_requires=[
         'nose>=1.0',
     ],
     tests_require=[
-        'django-nose>=0.1.3',
+        'django-nose>=1.4.3',
     ],
     test_suite='runtests.runtests',
     include_package_data=True,
