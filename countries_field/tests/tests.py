@@ -1,12 +1,11 @@
 # coding: utf-8
 import unittest
 from django.conf import settings
-from django.db.models import loading
 from django.forms import model_to_dict
 from django.test import TestCase
 
 from countries_field.fields import CountriesValue
-from models import TestCountriesModel, TestCountriesChildModel
+from models import TestCountriesModel
 
 
 class CountriesFieldTests(TestCase):
@@ -17,14 +16,12 @@ class CountriesFieldTests(TestCase):
         cls._installed_apps = settings.INSTALLED_APPS
         settings.INSTALLED_APPS.append("countries_field.tests")
         from django.core.management import call_command
-        loading.cache.loaded = False
-        call_command('syncdb', verbosity=0)
+        call_command('migrate', verbosity=0)
 
     @classmethod
     def tearDownClass(cls):
         """ Отключаем тестовое приложение. """
         settings.INSTALLED_APPS = cls._installed_apps
-        loading.cache.loaded = False
 
     def setUp(self):
         self.initial_countries = ["ru", "UA", "Au"]
@@ -114,5 +111,6 @@ class CountriesFieldTests(TestCase):
 
     def testInheritance(self):
         """ Проверяет, что поле со странами можно унаследовать"""
+        from models import TestCountriesChildModel
         child_model = TestCountriesChildModel.objects.create(countries=self.initial_countries)
         self.assertEqual(self.initial_countries, child_model.countries)
