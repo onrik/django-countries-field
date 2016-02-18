@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.fields.subclassing import Creator
 
 from .bitfield.models import BitField, MAX_FLAG_COUNT
+from .forms import CountriesFormField
 
 # Допустимые биты для хранения стран.
 VALID_BINARY_MASK = (1 << MAX_FLAG_COUNT) - 1
