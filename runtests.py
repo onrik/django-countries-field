@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 from django.conf import settings
 
@@ -32,10 +32,6 @@ from django_nose import NoseTestSuiteRunner
 
 
 def runtests(*test_args, **kwargs):
-    if 'south' in settings.INSTALLED_APPS:
-        from south.management.commands import patch_for_test_db_setup
-        patch_for_test_db_setup()
-
     if not test_args:
         test_args = ['countries_field']
 
@@ -45,10 +41,10 @@ def runtests(*test_args, **kwargs):
     sys.exit(failures)
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option('--verbosity', dest='verbosity', action='store',
+    parser = ArgumentParser()
+    parser.add_argument('--verbosity', dest='verbosity', action='store',
                       default=1, type=int)
-    parser.add_options(NoseTestSuiteRunner.options)
+    parser.add_arguments(NoseTestSuiteRunner.options)
     (options, args) = parser.parse_args()
 
     runtests(*args, **options.__dict__)

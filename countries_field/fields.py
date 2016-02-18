@@ -16,7 +16,7 @@ def countries_to_bin(countries):
     binaries = [0, 0, 0, 0]
     for c in countries:
         c_num = ALPHA2_MAP[c.upper()]
-        byte_num = c_num / MAX_FLAG_COUNT
+        byte_num = int(c_num / MAX_FLAG_COUNT)
         bit_num = c_num % MAX_FLAG_COUNT
         binaries[byte_num] |= 1 << bit_num
     return binaries
@@ -30,7 +30,7 @@ def bin_to_countries(binaries):
 
     """
     countries = []
-    for byte_num in xrange(4):
+    for byte_num in range(4):
         byte = binaries[byte_num] & VALID_BINARY_MASK
         byte_shift = byte_num * MAX_FLAG_COUNT
         bit_num = 0
@@ -50,7 +50,7 @@ class CountriesValue(object):
                          for b in (binaries or [0, 0, 0, 0])]
         if isinstance(countries, (list, tuple)):
             countries = countries_to_bin(countries)
-            for i in xrange(4):
+            for i in range(4):
                 self.binaries[i] |= countries[i]
 
     def __iter__(self):
@@ -85,7 +85,7 @@ class CountriesValue(object):
         if isinstance(other, (list, tuple)):
             other = countries_to_bin(other)
         result = [0, 0, 0, 0]
-        for i in xrange(4):
+        for i in range(4):
             result[i] = self.binaries[i] | other[i]
         return CountriesValue(result)
 
@@ -98,7 +98,7 @@ class CountriesValue(object):
         if isinstance(other, (list, tuple)):
             other = countries_to_bin(other)
         result = [0, 0, 0, 0]
-        for i in xrange(4):
+        for i in range(4):
             result[i] = self.binaries[i] & ~other[i]
         return CountriesValue(result)
 
@@ -113,7 +113,7 @@ class CountriesValue(object):
         except KeyError:
             # Передана невалидная или неподдерживаемая страна
             return False
-        for i in xrange(4):
+        for i in range(4):
             if binaries[i]:
                 return bool(self.binaries[i] & binaries[i])
         return False

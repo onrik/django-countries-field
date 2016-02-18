@@ -1,11 +1,12 @@
 # coding: utf-8
+from __future__ import absolute_import
 import unittest
 from django.conf import settings
 from django.forms import model_to_dict
 from django.test import TestCase
 
 from countries_field.fields import CountriesValue
-from models import TestCountriesModel
+from .models import TestCountriesModel
 
 
 class CountriesFieldTests(TestCase):
@@ -111,6 +112,6 @@ class CountriesFieldTests(TestCase):
 
     def testInheritance(self):
         """ Проверяет, что поле со странами можно унаследовать"""
-        from models import TestCountriesChildModel
+        from .models import TestCountriesChildModel
         child_model = TestCountriesChildModel.objects.create(countries=self.initial_countries)
         self.assertEqual(self.initial_countries, child_model.countries)
