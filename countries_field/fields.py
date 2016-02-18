@@ -13,6 +13,10 @@ ALPHA2_INDEX = [c.alpha2 for c in pycountry.countries]
 ALPHA2_MAP = {c: p for p, c in enumerate(ALPHA2_INDEX)}
 
 
+def get_bit_field_name(i, name="countries"):
+    return "_{}_b{}".format(name, i)
+
+
 def countries_to_bin(countries):
     binaries = [0, 0, 0, 0]
     for c in countries:
@@ -41,6 +45,51 @@ def bin_to_countries(binaries):
             byte >>= 1
             bit_num += 1
     return countries
+
+
+def countries_contains(countries):
+    """ Возвращает Q-объект отфильтровывающий строки, содержащие в себе
+    значения любой из указанных стран
+
+    :param countries: список стран для поиска
+    :return: models.Q
+    """
+    contains_q = models.Q()
+    for c in countries:
+        contains_q |= countries_contains_exact([c])
+    return contains_q
+
+
+def countries_contains_exact(countries):
+    """ Возвращает Q-объект отфильтровывающий строки, содержащие в себе
+    значения всех указанных стран
+
+    :param countries: список стран для поиска
+    :return: models.Q
+    """
+    countries = countries_to_bin(countries)
+    contains_q = models.Q(**{get_bit_field_name(i):
+                             models.F(get_bit_field_name(i)).bitor(b)
+                             for i, b in enumerate(countries)})
+    return contains_q
+
+
+def countries_exact(countries):
+    """ Возвращает Q-объект отфильтровывающий строки, точно совпадающие с
+    указанным списком стран
+
+    :param countries: список стран для поиска
+    :return: models.Q
+    """
+    countries = countries_to_bin(countries)
+    return models.Q(**{get_bit_field_name(i): b
+                       for i, b in enumerate(countries)})
+
+
+def countries_isnull():
+    """ Возвращает Q-объект отфильтровывающий строки с пустым списком стран
+    """
+    return countries_exact([])
 
 
 class CountriesValue(object):
@@ -141,15 +190,12 @@ class CountriesFieldDescriptor(Creator):
 class CountriesField(models.Field):
     """ Класс поля для хранения битовой карты стран. """
 
-    def get_bit_field_name(self, i, name="countries"):
-        return "_{}_b{}".format(name, i)
-
     def contribute_to_class(self, cls, name, virtual_only=True):
         super(CountriesField, self).contribute_to_class(cls, name, virtual_only=True)
         self.bit_field_names = []
         if not cls._meta.abstract:
             for i in range(0, 4):
-                bit_field_name = self.get_bit_field_name(i, name=name)
+                bit_field_name = get_bit_field_name(i, name=name)
                 start = i * MAX_FLAG_COUNT
                 end = i * MAX_FLAG_COUNT + MAX_FLAG_COUNT
                 flags = ALPHA2_INDEX[start:end]

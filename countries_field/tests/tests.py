@@ -5,12 +5,13 @@ from django.conf import settings
 from django.forms import model_to_dict
 from django.test import TestCase
 
-from countries_field.fields import CountriesValue
+from countries_field.fields import (CountriesValue, countries_contains,
+                                    countries_contains_exact, countries_exact,
+                                    countries_isnull)
 from .models import TestCountriesModel
 
 
-class CountriesFieldTests(TestCase):
-
+class BaseTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         """ Подключает тестовые модели и синкает базу с ними """
@@ -24,6 +25,8 @@ class CountriesFieldTests(TestCase):
         """ Отключаем тестовое приложение. """
         settings.INSTALLED_APPS = cls._installed_apps
 
+
+class CountriesFieldTests(BaseTestCase):
     def setUp(self):
         self.initial_countries = ["ru", "UA", "Au"]
         self.testee = TestCountriesModel.objects.create(
@@ -115,3 +118,36 @@ class CountriesFieldTests(TestCase):
         from .models import TestCountriesChildModel
         child_model = TestCountriesChildModel.objects.create(countries=self.initial_countries)
         self.assertEqual(self.initial_countries, child_model.countries)
+
+
+class FiltersTestCase(BaseTestCase):
+    def setUp(self):
+        self.country1 = TestCountriesModel.objects.create(countries=[])
+        self.country2 = TestCountriesModel.objects.create(countries=['ru', 'us', 'fr'])
+        self.country3 = TestCountriesModel.objects.create(countries=['ru', 'ua'])
+        self.country4 = TestCountriesModel.objects.create(countries=['ru'])
+
+    def testIsNull(self):
+        countries = TestCountriesModel.objects.filter(countries_isnull())
+
+        self.assertEqual(countries.count(), 1)
+        self.assertIn(self.country1, countries)
+
+    def testContains(self):
+        countries = TestCountriesModel.objects.filter(countries_contains(['us', 'ua']))
+
+        self.assertEqual(countries.count(), 2)
+        self.assertIn(self.country2, countries)
+        self.assertIn(self.country3, countries)
+
+    def testExact(self):
+        countries = TestCountriesModel.objects.filter(countries_exact(['ru']))
+
+        self.assertEqual(countries.count(), 1)
+        self.assertIn(self.country4, countries)
+
+    def testContainsExact(self):
+        countries = TestCountriesModel.objects.filter(countries_contains_exact(['ru', 'fr']))
+
+        self.assertEqual(countries.count(), 1)
+        self.assertIn(self.country2, countries)
