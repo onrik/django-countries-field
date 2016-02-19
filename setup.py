@@ -14,14 +14,8 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.7.0,<1.9',
+        'Django>=1.7,<1.10',
         'pycountry>=1.20',
-    ],
-    setup_requires=[
-        'nose>=1.3.7',
-    ],
-    tests_require=[
-        'django-nose>=1.4.3',
     ],
     test_suite='runtests.runtests',
     include_package_data=True,
