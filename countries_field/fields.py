@@ -13,8 +13,8 @@ ALPHA2_INDEX = [c.alpha2 for c in pycountry.countries]
 ALPHA2_MAP = {c: p for p, c in enumerate(ALPHA2_INDEX)}
 
 
-def get_bit_field_name(i, name="countries"):
-    return "_{}_b{}".format(name, i)
+def get_bit_field_name(i, name="countries", prefix=""):
+    return "{}_{}_b{}".format(prefix, name, i)
 
 
 def countries_to_bin(countries):
@@ -47,49 +47,53 @@ def bin_to_countries(binaries):
     return countries
 
 
-def countries_contains(countries):
+def countries_contains(countries, prefix=""):
     """ Возвращает Q-объект отфильтровывающий строки, содержащие в себе
     значения любой из указанных стран
 
     :param countries: список стран для поиска
+    :param prefix: префикс к названию поля
     :return: models.Q
     """
     contains_q = models.Q()
     for c in countries:
-        contains_q |= countries_contains_exact([c])
+        contains_q |= countries_contains_exact([c], prefix=prefix)
     return contains_q
 
 
-def countries_contains_exact(countries):
+def countries_contains_exact(countries, prefix=""):
     """ Возвращает Q-объект отфильтровывающий строки, содержащие в себе
     значения всех указанных стран
 
     :param countries: список стран для поиска
+    :param prefix: префикс к названию поля
     :return: models.Q
     """
     countries = countries_to_bin(countries)
-    contains_q = models.Q(**{get_bit_field_name(i):
-                             models.F(get_bit_field_name(i)).bitor(b)
+    contains_q = models.Q(**{get_bit_field_name(i, prefix=prefix):
+                             models.F(get_bit_field_name(i, prefix=prefix)).bitor(b)
                              for i, b in enumerate(countries)})
     return contains_q
 
 
-def countries_exact(countries):
+def countries_exact(countries, prefix=""):
     """ Возвращает Q-объект отфильтровывающий строки, точно совпадающие с
     указанным списком стран
 
     :param countries: список стран для поиска
+    :param prefix: префикс к названию поля
     :return: models.Q
     """
     countries = countries_to_bin(countries)
-    return models.Q(**{get_bit_field_name(i): b
+    return models.Q(**{get_bit_field_name(i, prefix=prefix): b
                        for i, b in enumerate(countries)})
 
 
-def countries_isnull():
+def countries_isnull(prefix=""):
     """ Возвращает Q-объект отфильтровывающий строки с пустым списком стран
+    :param prefix: префикс к названию поля
     """
-    return countries_exact([])
+    return countries_exact([], prefix=prefix)
 
 
 class CountriesValue(object):
